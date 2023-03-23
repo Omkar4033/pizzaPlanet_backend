@@ -36,9 +36,9 @@ router.post('/placeorder',async(req,res)=>{
     });
 
     const newOrder= new Order({
-      name:curruser.name,
-      email:curruser.email,
-      userId:curruser._id,
+      name:curruser?.name || "omkar Raghu",
+      email:curruser?.email || "raghuomkar@gmail.com",
+      userId:curruser._id || 1 ,
       orderItems:cartItems,
       Address:"omkar address",
       totalPrice:subtotal,

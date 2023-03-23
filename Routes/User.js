@@ -85,10 +85,10 @@ router.post('/register', async (req, res) => {
  router.post("/login", async (req, res) => {
    const { email, password } = req.body;
    try {
-     const user = await User.findOne({ email});
-     const isValidPassword = await bcrypt.compare(password, user.password);
+     const user = await User.findOne({ email,password});
+    //  const isValidPassword = await bcrypt.compare(password, user.password);
     
-     if (user.length > 0 && isValidPassword) {
+     if (user.length > 0 ) {
        const currentUser = {
          name: user[0].name,
          email: user[0].email,
