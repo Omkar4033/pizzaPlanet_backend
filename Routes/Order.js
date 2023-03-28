@@ -1,11 +1,13 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Order = require('../Models/orderSchema');
-const stripe=require("stripe")("sk_test_51MfQSHSBGOkkt5PzJMYF7X69preMido2X8MsPmzoaXRjCqfqV08zhYblSetxbskZLNhLNZTp5DrXz2cGD6coIyBl00Y5UXdy5K");
-const { v4: uuidv4 } = require('uuid');
+const Order = require("../Models/orderSchema");
+const stripe = require("stripe")(
+  "sk_test_51MfQSHSBGOkkt5PzJMYF7X69preMido2X8MsPmzoaXRjCqfqV08zhYblSetxbskZLNhLNZTp5DrXz2cGD6coIyBl00Y5UXdy5K"
+);
+const { v4: uuidv4 } = require("uuid");
 
 // GET all orders
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const orders = await Order.find();
     res.status(200).json(orders);
@@ -20,32 +22,30 @@ router.get('/', async (req, res) => {
 // });
 
 // CREATE a new order
-router.post('/placeorder',async(req,res)=>{
-
-  const { payment_method, subtotal,cartItems,curruser } = req.body;
+router.post("/placeorder", async (req, res) => {
+  const { payment_method, subtotal, cartItems, curruser } = req.body;
 
   try {
     const paymentMethod = await stripe.paymentMethods.retrieve(payment_method);
 
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Number(subtotal*100),
+      amount: Number(subtotal * 100),
       currency: "inr",
       payment_method_types: ["card"],
       payment_method: payment_method,
       confirm: true,
     });
 
-    const newOrder= new Order({
-      name:curruser?.name || "omkar Raghu",
-      email:curruser?.email || "raghuomkar@gmail.com",
-      userId:curruser._id || 1 ,
-      orderItems:cartItems,
-      Address:"omkar address",
-      totalPrice:subtotal,
-      status:"new",
-      transactionId:payment_method
-    
-    })
+    const newOrder = new Order({
+      name: curruser?.name || "omkar Raghu",
+      email: curruser?.email || "raghuomkar@gmail.com",
+      userId: curruser?._id || 1,
+      orderItems: cartItems,
+      Address: "omkar address",
+      totalPrice: subtotal,
+      status: "new",
+      transactionId: payment_method,
+    });
 
     newOrder.save();
 
@@ -54,12 +54,7 @@ router.post('/placeorder',async(req,res)=>{
     console.log(error);
     res.json({ success: false, error: error.message });
   }
-  })
-
-
-
-
-
+});
 
 // UPDATE an order by ID
 // router.patch('/:id', getOrder, async (req, res) => {
@@ -85,13 +80,13 @@ router.post('/placeorder',async(req,res)=>{
 //   }
 // });
 
-router.delete('/:id', async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
-     const deletedOrder= await Order.findByIdAndDelete(req.params.id);
-     if(!req.params.id){
-      return res.status(400).send({message:"wrong id"});
-     }
-     res.status(200).send(this.deletedOrder);
+    const deletedOrder = await Order.findByIdAndDelete(req.params.id);
+    if (!req.params.id) {
+      return res.status(400).send({ message: "wrong id" });
+    }
+    res.status(200).send(this.deletedOrder);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
