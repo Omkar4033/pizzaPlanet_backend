@@ -21,8 +21,8 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['new', 'preparing', 'baking', 'ready', 'delivered'],
-    default: 'new',
+    default:"new",
+    required:false,
   },
   transactionId:{
     type:String,
