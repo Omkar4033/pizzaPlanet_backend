@@ -6,10 +6,10 @@ const stripe = require("stripe")(
 );
 const { v4: uuidv4 } = require("uuid");
 
-// GET all orders
+ // GET all orders
 router.get("/", async (req, res) => {
   try {
-    const orders = await Order.find();
+    const orders = await Order.find().sort({timestamp: -1});
     res.status(200).json(orders);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -17,11 +17,11 @@ router.get("/", async (req, res) => {
 });
 
 // GET a single order by ID
-// router.get('/:id', getOrder, async (req, res) => {
-//   res.json(res.order);
-// });
+ router.get('/:id', getOrder, async (req, res) => {
+   res.json(res.order);
+ });
 
-// CREATE a new order
+ 
 router.post("/placeorder", async (req, res) => {
   const { payment_method, subtotal, cartItems, curruser } = req.body;
 
@@ -56,29 +56,20 @@ router.post("/placeorder", async (req, res) => {
   }
 });
 
-// UPDATE an order by ID
-// router.patch('/:id', getOrder, async (req, res) => {
-//   const { user, pizzas, status, totalPrice } = req.body;
-//   if (user) {
-//     res.order.user = user;
-//   }
-//   if (pizzas) {
-//     res.order.pizzas = pizzas;
-//   }
-//   if (status) {
-//     res.order.status = status;
-//   }
-//   if (totalPrice) {
-//     res.order.totalPrice = totalPrice;
-//   }
 
-//   try {
-//     const updatedOrder = await res.order.save();
-//     res.json(updatedOrder);
-//   } catch (err) {
-//     res.status(400).json({ message: err.message });
-//   }
-// });
+ router.patch('/:id', getOrder, async (req, res) => {
+   const { status } = req.body;
+  
+   if (status) {
+     res.order.status = status;
+   }
+   try {
+     const updatedOrder = await res.order.save();
+     res.json(updatedOrder);
+   } catch (err) {
+     res.status(400).json({ message: err.message });
+   }
+});
 
 router.delete("/:id", async (req, res) => {
   try {
@@ -93,18 +84,18 @@ router.delete("/:id", async (req, res) => {
 });
 
 // Middleware function to get an order by ID
-// async function getOrder(req, res, next) {
-//   let order;
-//   try {
-//     order = await Order.findById(req.params.id).populate('user').populate('pizzas');
-//     if (order == null) {
-//       return res.status(404).json({ message: 'Cannot find order' });
-//     }
-//   } catch (err) {
-//     return res.status(500).json({ message: err.message });
-//   }
-//   res.order = order;
-//   next();
-// }
+ async function getOrder(req, res, next) {
+   let order;
+   try {
+     order = await Order.findById(req.params.id);
+     if (order == null) {
+       return res.status(404).json({ message: 'Cannot find order' });
+     }
+   } catch (err) {
+     return res.status(500).json({ message: err.message });
+   }
+   res.order = order;
+   next();
+ }
 
 module.exports = router;
