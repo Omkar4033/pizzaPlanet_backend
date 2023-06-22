@@ -8,12 +8,22 @@ const { v4: uuidv4 } = require("uuid");
 
  // GET all orders
 router.get("/", async (req, res) => {
-  try {
-    const orders = await Order.find().sort({timestamp: -1});
-    res.status(200).json(orders);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+
+   const {email}= req.query;
+   if(email)
+   {
+      const orders=await Order.find({email}).sort({timestamp: -1});
+      res.status(200).json(orders);
+   }
+   else{
+
+     try {
+       const orders = await Order.find().sort({timestamp: -1});
+       res.status(200).json(orders);
+     } catch (err) {
+       res.status(500).json({ message: err.message });
+     }
+   }
 });
 
 // GET a single order by ID
