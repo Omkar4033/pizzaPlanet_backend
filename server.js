@@ -11,23 +11,24 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Set up body-parser middleware
-app.use(bodyParser.json());
-app.use(cors());
-app.get('/menu', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
-});
+ app.use(bodyParser.json());
+ app.use(cors());
+ app.get('/menu', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+  });
 
 // Connect to MongoDB database
+
+const mongourl="mongodb+srv://raghuomkar9604022654:Omkar4033@cluster0.nfd9det.mongodb.net/pizzaPlanet?retryWrites=true&w=majority"
 mongoose.set('strictQuery', false);
-mongoose.connect('mongodb://localhost/pizza-maker', { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB connected'))
+mongoose.connect(mongourl, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => console.log('MongoDB connected'))
   .catch((err) => console.log(err));
 
-app.use('/api/pizzas', pizzaRouter);
-app.use('/api/users', userRouter);
-app.use('/api/orders',orderRouter);
-app.use('/api/stripes',striperoutes); 
-// Start the server
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+ app.use('/api/pizzas', pizzaRouter);
+ app.use('/api/users', userRouter);
+ app.use('/api/orders',orderRouter);
+ app.use('/api/stripes',striperoutes); 
+ // Start the server
+ app.listen(port, () => {
+   console.log(` New Server at port ${port}`);
+ });
